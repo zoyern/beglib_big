@@ -14,28 +14,35 @@ include libs/library/library.mk
 
 SRC_DIR		= src
 BUILD_DIR	= build
+BUILD_DIR_OBJ = build/obj
 NAME		= program
 CFLAG		= -Wall -Wextra -Werror -g3 -gdwarf-4
 LDFLAGS 	= 
 SRC_FILE	= $(wildcard $(SRC_DIR)/*.c)
 
-OBJ			= $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o, $(SRC_FILE))
+OBJ			= $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR_OBJ)/%.o, $(SRC_FILE))
 CC			= cc
 
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	@$(CC)	$(CFLAG) -c $< -o $@
+	@$(CC)	$(CFLAG) -c	$< -o $@
+	@clear
+
+$(BUILD_DIR_OBJ)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	@$(CC)	$(CFLAG) -c	$< -o $@
+	@clear
 
 all : $(NAME)
 
 $(NAME): $(OBJ) 
-	@echo $($(dir $(LIBRARY_PATH)))
+	@echo $($(dir $(OBJ)))
 	$(LIBRARY_RE)
-	@$(CC) $(OBJ) -o $(NAME) $(CFLAG) $(LDFLAGS) $(LIBRARY_LIB)
+	@$(CC) $(OBJ) -o $(BUILD_DIR)/$(NAME) $(CFLAG) $(LDFLAGS) $(LIBRARY_LIB)
 	cp $(LIBRARY_HEAD) src/library.h
-	./$(NAME)
 	@clear
+	./$(BUILD_DIR)/$(NAME)
 
 clear :
 	@echo "42Paris : $(NAME)"
